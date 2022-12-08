@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.example</groupId>
+    <artifactId>turbo-platform-autotest-v2</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- testNG -->
+        <testng.version>7.6.1</testng.version>
+
+        <!-- Selenium -->
+        <selenium.version>4.6.0</selenium.version>
+
+        <!-- allure-testNG-adapter -->
+        <allure.testng>2.20.1</allure.testng>
+
+        <!-- lombok -->
+        <lombok.version>1.18.24</lombok.version>
+
+        <!-- assertJ -->
+        <assertj.version>3.23.1</assertj.version>
+
+        <!-- webDriverManager -->
+        <webdrivermanager.version>5.3.1</webdrivermanager.version>
+
+        <!-- logback -->
+        <logback.version>1.4.5</logback.version>
+
+        <!-- Yandex html elements -->
+        <html.elements.version>1.21.4</html.elements.version>
+
+        <!-- custom property -->
+        <run.stand>test</run.stand>
+        <user.set>ltest43</user.set>
+        <user.remote>false</user.remote>
+
+        <!-- MAVEN -->
+        <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
+        <allure-maven.version>2.10.0</allure-maven.version>
+        <allure-maven-reporter.version>2.17.3</allure-maven-reporter.version>
+        <maven-clean-plugin.version>3.1.0</maven-clean-plugin.version>
+        <maven-resources-plugin.version>3.0.2</maven-resources-plugin.version>
+        <maven-surefire-plugin.version>3.0.0-M7</maven-surefire-plugin.version>
+
+        <aspectj.version>1.9.7</aspectj.version>
+
+
+    </properties>
+
+    <dependencies>
+        <!-- testNG -->
+        <!-- https://mvnrepository.com/artifact/org.testng/testng -->
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>${testng.version}</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java -->
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>${selenium.version}</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/io.qameta.allure/allure-testng -->
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-testng</artifactId>
+            <version>${allure.testng}</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.assertj/assertj-core -->
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>${assertj.version}</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/io.github.bonigarcia/webdrivermanager -->
+        <dependency>
+            <groupId>io.github.bonigarcia</groupId>
+            <artifactId>webdrivermanager</artifactId>
+            <version>${webdrivermanager.version}</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-classic -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/ru.sbtqa.htmlelements/htmlelements-java -->
+        <dependency>
+            <groupId>ru.sbtqa.htmlelements</groupId>
+            <artifactId>htmlelements-java</artifactId>
+            <version>${html.elements.version}</version>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>false</filtering>
+            </testResource>
+        </testResources>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>${maven-resources-plugin.version}</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>${maven-clean-plugin.version}</version>
+            </plugin>
+
+            <plugin>
+                <!-- плагин для генерации отчетов/параметризованного запуска maven -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.0.0-M7</version>
+                <configuration>
+                    <argLine>
+                        -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
+                    </argLine>
+                    <suiteXmlFiles>
+                        <suiteXmlFile>${suiteXmlFile}</suiteXmlFile>
+                    </suiteXmlFiles>
+                    <systemPropertyVariables>
+                        <!-- подтягивает переменные окружения по имени в теге (stand, user) -->
+                        <stand>${run.stand}</stand>
+                        <user>${user.set}</user>
+                        <remote>${user.remote}</remote>
+                    </systemPropertyVariables>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <!-- используется для возможности указания аннотаций в allure -->
+                        <groupId>org.aspectj</groupId>
+                        <artifactId>aspectjweaver</artifactId>
+                        <version>${aspectj.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <configuration>
+                    <!-- для переезда на java 11 поставить тег release и указать 11, при наличии java 11 на стороне jenkins -->
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <!-- плагин для сборки отчета allure -->
+                <groupId>io.qameta.allure</groupId>
+                <artifactId>allure-maven</artifactId>
+                <version>${allure-maven.version}</version>
+                <configuration>
+                    <propertiesFilePath>resources/allure.properties</propertiesFilePath>
+                    <reportVersion>${allure-maven-reporter.version}</reportVersion>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <reporting>
+        <excludeDefaults>true</excludeDefaults>
+        <plugins>
+            <plugin>
+                <groupId>io.qameta.allure</groupId>
+                <artifactId>allure-maven</artifactId>
+                <configuration>
+                    <allureDownloadUrl>
+                        https://repo.maven.apache.org/maven2/io/qameta/allure/allure-commandline/%s/allure-commandline-%s.zip
+                    </allureDownloadUrl>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
+
+    <profiles>
+        <profile>
+            <!-- профиль для указания в jenkins какой тестовый сьют необходимо выполнить
+             активирован по умолчанию  -->
+            <id>Suite: PlatformV20</id>
+            <properties>
+                <suiteXmlFile>src/test/resources/PlatformV20ng.xml</suiteXmlFile>
+            </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+
+        <profile>
+            <!-- указание каким юзером запускать тесты
+             ВКЛЮЧАЕТСЯ ТОЛЬКО ОДИН ЮЗЕР
+             после в панеле maven в idea небходимо перезагрузить проект maven -->
+            <id>[+] User: web_itest15</id>
+            <properties>
+                <user.set>web_itest15</user.set>
+            </properties>
+        </profile>
+        <profile>
+            <!-- Техническая учетная запись jenkins
+             включается в случае !!крайней!! необходимости-->
+            <id>[+] User: web_itest16</id>
+            <properties>
+                <user.set>web_itest16</user.set>
+            </properties>
+        </profile>
+        <profile>
+            <!-- Учетная запись для запуска тестов по умолчанию,
+             если все чекбоксы выключены данная учетная запись указана в TestBase -->
+            <id>[+] User: Ltest43</id>
+            <properties>
+                <user.set>Ltest43</user.set>
+            </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+
+        <profile>
+            <!-- Учетная запись для запуска на сденде test -->
+            <id>[+] User: autotestTest105</id>
+            <properties>
+                <user.set>autotestTest105</user.set>
+            </properties>
+
+        </profile>
+
+        <profile>
+            <!-- тестовая запись что бы гонять тесты поа не поправят базу и не испрявят дефектк после релоуда -->
+            <id>[+] User: ltest37</id>
+            <properties>
+                <user.set>ltest37</user.set>
+            </properties>
+
+        </profile>
+
+        <profile>
+            <!-- Учетная запись для теста групп тестов -->
+            <id>[+] User: autotestTestGroups</id>
+            <properties>
+                <user.set>autotestTestGroups</user.set>
+            </properties>
+
+        </profile>
+
+        <profile>
+            <!-- Учетная запись для запуска на сденде test(10.5.1) -->
+            <id>[+] User: autotestTest1051</id>
+            <properties>
+                <user.set>autotestTest1051</user.set>
+            </properties>
+
+        </profile>
+
+        <profile>
+            <!-- Учетная запись для запуска на сденде Linux -->
+            <id>[+] User: autotestLinux</id>
+            <properties>
+                <user.set>autotestLinux</user.set>
+            </properties>
+
+        </profile>
+
+        <profile>
+            <!-- Учетная запись для запуска на сденде Release -->
+            <id>[+] User: autotestRelease</id>
+            <properties>
+                <user.set>autotestRelease</user.set>
+            </properties>
+
+        </profile>
+
+        <profile>
+            <!-- Учетная запись для запуска на сденде Dev -->
+            <id>[+] User: autotestDev</id>
+            <properties>
+                <user.set>autotestDev</user.set>
+            </properties>
+
+        </profile>
+
+        <profile>
+            <!-- ВКЛЮЧАЕТСЯ ТОЛЬКО ОДИН СТЕНД  -->
+            <id>[X] Stand: TEST</id>
+            <properties>
+                <run.stand>test</run.stand>
+            </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+        <profile>
+            <id>[X] Stand: DEV</id>
+            <properties>
+                <run.stand>dev</run.stand>
+            </properties>
+        </profile>
+        <profile>
+            <id>[X] Stand: LINUX</id>
+            <properties>
+                <run.stand>linux</run.stand>
+            </properties>
+        </profile>
+        <profile>
+            <id>[X] Stand: NEXT_TEST</id>
+            <properties>
+                <run.stand>next_test</run.stand>
+            </properties>
+        </profile>
+        <profile>
+            <id>[X] Stand: LOCAL_TEST</id>
+            <properties>
+                <run.stand>local_test</run.stand>
+            </properties>
+        </profile>
+        <profile>
+            <id>[X] Stand: NEXT_DEV</id>
+            <properties>
+                <run.stand>next_dev</run.stand>
+            </properties>
+        </profile>
+        <profile>
+            <id>[X] Stand: RELEASE</id>
+            <properties>
+                <run.stand>release</run.stand>
+            </properties>
+        </profile>
+
+        <profile>
+            <!-- Флаг для запуска на удаленной машине -->
+            <id>[ ] Run Remote</id>
+            <properties>
+                <user.remote>true</user.remote>
+            </properties>
+        </profile>
+    </profiles>
+
+</project>

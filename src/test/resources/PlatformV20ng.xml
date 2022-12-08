@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<suite name="Тестирование компонентов платформы" >
+    <listeners>
+        <listener class-name="ru.cbgr.qa.turbo.service.ErrorTestListener"/>
+    </listeners>
+
+    <test name="WaitUpdate">
+        <classes>
+            <class name="tests.ServiceTests.WaitTurboUpdateTest"/>
+        </classes>
+    </test>
+</suite>
